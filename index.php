@@ -134,6 +134,16 @@ function buildUrl($params = [])
     return '?' . http_build_query($query);
 }
 
+$baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://')
+    . $_SERVER['HTTP_HOST']
+    . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+
+$shareUrlImagen = $imagenActual
+    ? $baseUrl . '/?img=' . $idImagen . '#viewer'
+    : '';
+
+$shareUrlPagina = $baseUrl . '/';
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -337,6 +347,21 @@ function buildUrl($params = [])
 
                 </a>
 
+                <div class="flex gap-3 mt-4 justify-center flex-wrap">
+                    <button
+                        onclick="copiar('<?= htmlspecialchars($shareUrlImagen) ?>')"
+                        class="soft-card px-4 py-2 rounded-xl text-sm hover:bg-[#c7a16a33] transition"
+                    >
+                        Compartir imagen
+                    </button>
+                    <button
+                        onclick="copiar('<?= htmlspecialchars($shareUrlPagina) ?>')"
+                        class="soft-card px-4 py-2 rounded-xl text-sm hover:bg-[#c7a16a33] transition"
+                    >
+                        Compartir página
+                    </button>
+                </div>
+
             </div>
 
         <?php else: ?>
@@ -360,6 +385,14 @@ function buildUrl($params = [])
 </div>
 
 
+
+<script type="text/javascript">
+  function copiar(texto) {
+    navigator.clipboard.writeText(texto).then(function() {
+      alert('Enlace copiado');
+    });
+  }
+</script>
 
 <script type="text/javascript">
   const lightbox = GLightbox({ selector: '.glightbox' });
