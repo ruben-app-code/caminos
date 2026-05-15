@@ -329,9 +329,21 @@ $shareUrlPagina = $baseUrl . '/';
 
             <div class="soft-card p-5 rounded-[35px] shadow-2xl max-w-full">
 
+                <div class="flex justify-end mb-3">
+                    <button
+                        onclick="window.lightbox.open(document.getElementById('glightbox-link'))"
+                        class="soft-card px-4 py-2 rounded-xl text-sm hover:bg-[#c7a16a33] transition inline-flex items-center gap-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+                        </svg>
+                        Ver
+                    </button>
+                </div>
+
                 <a class="glightbox" 
-                    href="<?= htmlspecialchars($imagenActual['ruta']) ?>"                    
-                                        
+                    href="<?= htmlspecialchars($imagenActual['ruta']) ?>"
+                    id="glightbox-link"
                     data-type="image"
                     data-effect="fade"                    
                     data-height="auto"
@@ -395,7 +407,7 @@ $shareUrlPagina = $baseUrl . '/';
 </script>
 
 <script type="text/javascript">
-  const lightbox = GLightbox({ selector: '.glightbox' });
+  window.lightbox = GLightbox({ selector: '.glightbox' });
 </script>
 </body>
 </html>
