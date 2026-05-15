@@ -258,6 +258,7 @@ function buildUrl($params = [])
                     Nombre ↓
                 </a>
 
+<!--
                 <a
                     href="<?= buildUrl([
                         'ordenar' => 'fecha',
@@ -277,7 +278,7 @@ function buildUrl($params = [])
                 >
                     Fecha ↓
                 </a>
-
+-->
             </div>
 
         </div>
@@ -298,9 +299,10 @@ function buildUrl($params = [])
                         <?= htmlspecialchars(legacy_texto_formateado(pathinfo($img['nombre'], PATHINFO_FILENAME))) ?>
                     </div>
 
-                    <div class="text-sm mt-2 text-[#8f6b42]">
+
+                    <!--div class="text-sm mt-2 text-[#8f6b42]">
                         <?= date('Y-m-d H:i', $img['fecha']) ?>
-                    </div>
+                    </div-->
 
                 </a>
 
