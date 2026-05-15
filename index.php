@@ -8,6 +8,12 @@ $direccion = $_GET['dir'] ?? 'desc';
 
 $imagenes = [];
 
+/*
+|--------------------------------------------------------------------------
+| Leer imágenes
+|--------------------------------------------------------------------------
+*/
+
 if (is_dir($directorio)) {
 
     $archivos = scandir($directorio);
@@ -22,8 +28,8 @@ if (is_dir($directorio)) {
 
             $imagenes[] = [
                 'nombre' => $archivo,
-                'ruta' => 'hojas-informativas/' . $archivo,
-                'fecha' => filemtime($rutaCompleta),
+                'ruta'   => 'hojas-informativas/' . $archivo,
+                'fecha'  => filemtime($rutaCompleta),
             ];
         }
     }
@@ -31,15 +37,18 @@ if (is_dir($directorio)) {
 
 /*
 |--------------------------------------------------------------------------
-| Ordenamiento
+| Ordenamiento seguro
 |--------------------------------------------------------------------------
 */
 
 usort($imagenes, function ($a, $b) use ($ordenarPor, $direccion) {
 
     if ($ordenarPor === 'nombre') {
+
         $resultado = strcasecmp($a['nombre'], $b['nombre']);
+
     } else {
+
         $resultado = $a['fecha'] <=> $b['fecha'];
     }
 
@@ -48,16 +57,52 @@ usort($imagenes, function ($a, $b) use ($ordenarPor, $direccion) {
         : -$resultado;
 });
 
-function buildUrl($ordenar, $dir)
+/*
+|--------------------------------------------------------------------------
+| Imagen seleccionada segura
+|--------------------------------------------------------------------------
+|
+| Ya NO se recibe una ruta.
+| Ahora solo se recibe un índice numérico:
+|
+| ?img=0
+| ?img=1
+|
+*/
+
+$idImagen = isset($_GET['img'])
+    ? intval($_GET['img'])
+    : null;
+
+$imagenActual = null;
+
+if (
+    $idImagen !== null &&
+    isset($imagenes[$idImagen])
+) {
+    $imagenActual = $imagenes[$idImagen];
+}
+
+/*
+|--------------------------------------------------------------------------
+| Helper URL
+|--------------------------------------------------------------------------
+*/
+
+function buildUrl($params = [])
 {
-    return "?ordenar={$ordenar}&dir={$dir}";
+    $query = array_merge($_GET, $params);
+
+    return '?' . http_build_query($query);
 }
 
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
     <meta charset="UTF-8">
+
     <title>Shomer Hadavar</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -117,6 +162,7 @@ function buildUrl($ordenar, $dir)
         }
 
     </style>
+
 </head>
 
 <body class="text-[#4d3416]">
@@ -132,7 +178,7 @@ function buildUrl($ordenar, $dir)
             <div class="soft-card rounded-3xl p-5 shadow-xl">
 
                 <img
-                    src="<?= $logo ?>"
+                    src="<?= htmlspecialchars($logo) ?>"
                     class="w-full rounded-2xl object-contain"
                     alt="Logo"
                 >
@@ -151,29 +197,41 @@ function buildUrl($ordenar, $dir)
             <div class="grid grid-cols-2 gap-2">
 
                 <a
-                    href="<?= buildUrl('nombre', 'asc') ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center hover:scale-[1.02]"
+                    href="<?= buildUrl([
+                        'ordenar' => 'nombre',
+                        'dir' => 'asc'
+                    ]) ?>"
+                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
                 >
                     Nombre ↑
                 </a>
 
                 <a
-                    href="<?= buildUrl('nombre', 'desc') ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center hover:scale-[1.02]"
+                    href="<?= buildUrl([
+                        'ordenar' => 'nombre',
+                        'dir' => 'desc'
+                    ]) ?>"
+                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
                 >
                     Nombre ↓
                 </a>
 
                 <a
-                    href="<?= buildUrl('fecha', 'asc') ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center hover:scale-[1.02]"
+                    href="<?= buildUrl([
+                        'ordenar' => 'fecha',
+                        'dir' => 'asc'
+                    ]) ?>"
+                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
                 >
                     Fecha ↑
                 </a>
 
                 <a
-                    href="<?= buildUrl('fecha', 'desc') ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center hover:scale-[1.02]"
+                    href="<?= buildUrl([
+                        'ordenar' => 'fecha',
+                        'dir' => 'desc'
+                    ]) ?>"
+                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
                 >
                     Fecha ↓
                 </a>
@@ -185,10 +243,12 @@ function buildUrl($ordenar, $dir)
         <!-- LISTA -->
         <div class="flex-1 overflow-y-auto">
 
-            <?php foreach ($imagenes as $img): ?>
+            <?php foreach ($imagenes as $index => $img): ?>
 
                 <a
-                    href="?img=<?= urlencode($img['ruta']) ?>&ordenar=<?= $ordenarPor ?>&dir=<?= $direccion ?>"
+                    href="<?= buildUrl([
+                        'img' => $index
+                    ]) ?>"
                     class="menu-item block px-5 py-4 border-b border-[#c9aa7a22]"
                 >
 
@@ -211,13 +271,14 @@ function buildUrl($ordenar, $dir)
     <!-- VISOR -->
     <main class="flex-1 viewer overflow-auto p-10 flex items-center justify-center">
 
-        <?php if (!empty($_GET['img'])): ?>
+        <?php if ($imagenActual): ?>
 
             <div class="soft-card p-5 rounded-[35px] shadow-2xl max-w-full">
 
                 <img
-                    src="<?= htmlspecialchars($_GET['img']) ?>"
+                    src="<?= htmlspecialchars($imagenActual['ruta']) ?>"
                     class="max-w-full max-h-[90vh] rounded-2xl"
+                    alt=""
                 >
 
             </div>
