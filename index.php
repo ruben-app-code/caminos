@@ -163,6 +163,9 @@ function buildUrl($params = [])
 
     </style>
 
+<link rel="stylesheet" href="node_modules/glightbox/dist/css/glightbox.css" />
+<script src="node_modules/glightbox/dist/js/glightbox.min.js"></script>
+
 </head>
 
 <body class="text-[#4d3416]">
@@ -275,9 +278,17 @@ function buildUrl($params = [])
 
             <div class="soft-card p-5 rounded-[35px] shadow-2xl max-w-full">
 
-                <a
-                    href="<?= htmlspecialchars($imagenActual['ruta']) ?>"
-                    target="_blank"
+                <a class="glightbox" 
+                    href="<?= htmlspecialchars($imagenActual['ruta']) ?>"                    
+                    data-title="<?= htmlspecialchars($imagenActual['ruta']) ?>"
+                    data-description="description here"
+                    data-desc-position="right"
+                    data-type="image"
+                    data-effect="fade"
+                    data-width="900px"
+                    data-height="auto"
+                    data-zoomable="true"
+                    data-draggable="true"
                 >
 
                     <img
@@ -310,5 +321,10 @@ function buildUrl($params = [])
 
 </div>
 
+
+
+<script type="text/javascript">
+  const lightbox = GLightbox({ selector: '.glightbox' });
+</script>
 </body>
 </html>
