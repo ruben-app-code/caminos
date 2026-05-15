@@ -89,6 +89,44 @@ if (
 |--------------------------------------------------------------------------
 */
 
+function legacy_texto_formateado(?string $texto): string
+{
+    if (empty(trim($texto ?? ''))) {
+        return '';
+    }
+
+    $texto = trim($texto);
+
+    if (! preg_match('/^\d/', $texto)) {
+        return ucfirst(mb_strtolower($texto, 'UTF-8'));
+    }
+
+    if (preg_match('/^(.+?)(?:\s+|\-)(.+)$/u', $texto, $matches)) {
+
+        $posible_codigo = trim($matches[1]);
+        $resto = trim($matches[2]);
+
+        if (str_contains($posible_codigo, '.')) {
+            $codigo = $posible_codigo;
+        } else {
+            $codigo = '';
+            $resto = $texto;
+        }
+
+        $resto = ucfirst(mb_strtolower($resto, 'UTF-8'));
+
+        if ($codigo !== '') {
+            $resultado = $codigo . ' ' . $resto;
+        } else {
+            $resultado = $resto;
+        }
+    } else {
+        $resultado = mb_strtolower($texto, 'UTF-8');
+    }
+
+    return ucfirst(trim($resultado));
+}
+
 function buildUrl($params = [])
 {
     $query = array_merge($_GET, $params);
@@ -102,6 +140,7 @@ function buildUrl($params = [])
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Shomer Hadavar</title>
 
@@ -170,10 +209,10 @@ function buildUrl($params = [])
 
 <body class="text-[#4d3416]">
 
-<div class="flex h-screen overflow-hidden">
+<div class="flex flex-col lg:flex-row lg:h-screen lg:overflow-hidden">
 
     <!-- SIDEBAR -->
-    <aside class="w-80 sidebar flex flex-col">
+    <aside class="w-full lg:w-80 sidebar flex flex-col">
 
         <!-- LOGO -->
         <div class="p-6 border-b border-[#c9aa7a55]">
@@ -193,7 +232,7 @@ function buildUrl($params = [])
         <!-- CONTROLES -->
         <div class="p-5 border-b border-[#c9aa7a55]">
 
-            <div class="uppercase tracking-widest text-xs mb-4 gold-text font-bold">
+            <div class="uppercase tracking-widest text-sm mb-4 gold-text font-bold">
                 Ordenar imágenes
             </div>
 
@@ -204,7 +243,7 @@ function buildUrl($params = [])
                         'ordenar' => 'nombre',
                         'dir' => 'asc'
                     ]) ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
+                    class="soft-card px-3 py-2 rounded-xl text-base text-center"
                 >
                     Nombre ↑
                 </a>
@@ -214,7 +253,7 @@ function buildUrl($params = [])
                         'ordenar' => 'nombre',
                         'dir' => 'desc'
                     ]) ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
+                    class="soft-card px-3 py-2 rounded-xl text-base text-center"
                 >
                     Nombre ↓
                 </a>
@@ -224,7 +263,7 @@ function buildUrl($params = [])
                         'ordenar' => 'fecha',
                         'dir' => 'asc'
                     ]) ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
+                    class="soft-card px-3 py-2 rounded-xl text-base text-center"
                 >
                     Fecha ↑
                 </a>
@@ -234,7 +273,7 @@ function buildUrl($params = [])
                         'ordenar' => 'fecha',
                         'dir' => 'desc'
                     ]) ?>"
-                    class="soft-card px-3 py-2 rounded-xl text-sm text-center"
+                    class="soft-card px-3 py-2 rounded-xl text-base text-center"
                 >
                     Fecha ↓
                 </a>
@@ -251,15 +290,15 @@ function buildUrl($params = [])
                 <a
                     href="<?= buildUrl([
                         'img' => $index
-                    ]) ?>"
+                    ]) ?>#viewer"
                     class="menu-item block px-5 py-4 border-b border-[#c9aa7a22]"
                 >
 
-                    <div class="font-semibold text-sm break-all">
-                        <?= htmlspecialchars($img['nombre']) ?>
+                    <div class="font-semibold text-base break-all">
+                        <?= htmlspecialchars(legacy_texto_formateado(pathinfo($img['nombre'], PATHINFO_FILENAME))) ?>
                     </div>
 
-                    <div class="text-xs mt-2 text-[#8f6b42]">
+                    <div class="text-sm mt-2 text-[#8f6b42]">
                         <?= date('Y-m-d H:i', $img['fecha']) ?>
                     </div>
 
@@ -272,7 +311,7 @@ function buildUrl($params = [])
     </aside>
 
     <!-- VISOR -->
-    <main class="flex-1 viewer overflow-auto p-10 flex items-center justify-center">
+    <main id="viewer" class="flex-1 viewer overflow-auto p-10 flex items-center justify-center">
 
         <?php if ($imagenActual): ?>
 
