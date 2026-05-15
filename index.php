@@ -280,12 +280,9 @@ function buildUrl($params = [])
 
                 <a class="glightbox" 
                     href="<?= htmlspecialchars($imagenActual['ruta']) ?>"                    
-                    data-title="<?= htmlspecialchars($imagenActual['ruta']) ?>"
-                    data-description="description here"
-                    data-desc-position="right"
+                                        
                     data-type="image"
-                    data-effect="fade"
-                    data-width="900px"
+                    data-effect="fade"                    
                     data-height="auto"
                     data-zoomable="true"
                     data-draggable="true"
