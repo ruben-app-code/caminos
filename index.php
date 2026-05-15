@@ -275,11 +275,18 @@ function buildUrl($params = [])
 
             <div class="soft-card p-5 rounded-[35px] shadow-2xl max-w-full">
 
-                <img
-                    src="<?= htmlspecialchars($imagenActual['ruta']) ?>"
-                    class="max-w-full max-h-[90vh] rounded-2xl"
-                    alt=""
+                <a
+                    href="<?= htmlspecialchars($imagenActual['ruta']) ?>"
+                    target="_blank"
                 >
+
+                    <img
+                        src="<?= htmlspecialchars($imagenActual['ruta']) ?>"
+                        class="max-w-full max-h-[90vh] rounded-2xl cursor-pointer hover:scale-[1.01] transition"
+                        alt=""
+                    >
+
+                </a>
 
             </div>
 
